@@ -26,7 +26,7 @@ def forwardcheck(csp:CSP) -> bool:
     return True
 
 
-#MRV hurestic to chose what value to be assigned
+#MRV hurestic with degree to chose what value to be assigned
 def select_unassigned_variable(csp:CSP) -> int:
     size = csp.size
     min_val = size+1 #max value cannot be more than domain size
@@ -66,10 +66,11 @@ def recurseive_backtracing(csp:CSP): #returns soloution or failure
     var = csp.vars[var_index]
     for value in getDomain(csp,var): #Iterate on the domain
         csp.vars[var_index].value = value #Change the assignment
-        if csp.consistent(): #If compelete then do recursive search
-            resault = recurseive_backtracing(csp)
-            if resault != False: #if answer is found then return the assignment
-                return resault
+        if forwardcheck(csp):
+            if csp.consistent(): #If compelete then do recursive search
+                resault = recurseive_backtracing(csp)
+                if resault != False: #if answer is found then return the assignment
+                    return resault
         csp.vars[var_index].value = 0 #if the answer is not consistent or not found then remake the assignment
     return False   
 
