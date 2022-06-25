@@ -31,22 +31,39 @@ def forwardcheck(assignment:list,domain:list,size:int) -> bool:
 def select_unassigned_variable(csp:CSP) -> int:
     size = csp.size
     min_val = size+1 #max value cannot be more than domain size
-    index = 0
+    max_con = -1 #the degree to that variabel constrains others
+    index = size*size #The variabel that is chosen
     for i in range(size*size):
         variabel =  csp.vars[i]
         if variabel.value == 0 : #Check if it's assigned or not
             dsize = getDomain(csp,csp.vars[i]) #size of the domain of unassigned
+            #Check if degree hurestic is needed
+            if len(dsize) == min_val:
+                con = check_conflicts(csp,variabel)
+                if con > max_con:
+                    index = i
+                    max_con = con 
+            #Check if the values domain is smaller
             if len(dsize) < min_val:
                 index = i
                 min_val = len(dsize) 
+                max_con = check_conflicts(csp,variabel)
     return index   
 
+#Check how many variabels that are connect to var are not assigned a value
+def check_conflicts(csp:CSP,var:Variabel) -> int:
+    conflicts = 0 #Number of 
+    for variabels in var.friends:
+        var = csp.vars[variabels]
+        if var.value == 0:
+            conflicts = conflicts + 1
+    return conflicts
 
 if __name__ == "__main__":
     domain = [1,2,3]
-    assignment = [  1,2,3,
-                    2,3,1,
-                    3,1,2]
+    assignment = [  1,0,2,
+                    0,0,1,
+                    0,2,0]
     size = 3
     csp = CSP(domain,assignment,size)
 
@@ -55,7 +72,12 @@ if __name__ == "__main__":
 
     vars = csp.vars
     for i in range(size*size):
-        print(getDomain(csp,csp.vars[i]),end=" ")
+        dom = getDomain(csp,csp.vars[i])
+        var = csp.vars[i]
+        if var.value == 0:
+            print(dom,end=" ")
+        else:
+            print(var.value,end=" ")
         if i%size == size-1:
             print("")
 
