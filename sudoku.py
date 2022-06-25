@@ -18,8 +18,7 @@ def getDomain(csp:CSP,var:Variabel) -> list:
     return domain
 
 #Checks the assignment of the values is okay or not
-def forwardcheck(assignment:list,domain:list,size:int) -> bool:
-    csp = CSP(assignment,domain,size)
+def forwardcheck(csp:CSP) -> bool:
     for i in range(size*size):
         domain = getDomain(csp,csp.vars[i])
         if len(domain) == 0:
