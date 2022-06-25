@@ -26,6 +26,22 @@ def forwardcheck(assignment:list,domain:list,size:int) -> bool:
             return False
     return True
 
+
+#MRV hurestic to chose what value to be assigned
+def select_unassigned_variable(csp:CSP) -> int:
+    size = csp.size
+    min_val = size+1 #max value cannot be more than domain size
+    index = 0
+    for i in range(size*size):
+        variabel =  csp.vars[i]
+        if variabel.value == 0 : #Check if it's assigned or not
+            dsize = getDomain(csp,csp.vars[i]) #size of the domain of unassigned
+            if len(dsize) < min_val:
+                index = i
+                min_val = len(dsize) 
+    return index   
+
+
 if __name__ == "__main__":
     domain = [1,2,3]
     assignment = [  1,2,3,
@@ -41,7 +57,9 @@ if __name__ == "__main__":
     for i in range(size*size):
         print(getDomain(csp,csp.vars[i]),end=" ")
         if i%size == size-1:
-            print("") 
+            print("")
+
+    print(select_unassigned_variable(csp)) 
 
 
 
