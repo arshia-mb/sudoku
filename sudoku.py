@@ -59,30 +59,42 @@ def check_conflicts(csp:CSP,var:Variabel) -> int:
             conflicts = conflicts + 1
     return conflicts
 
+#Back tracking search algorithm
+def recurseive_backtracing(csp:CSP): #returns soloution or failure
+    if csp.complete(): #return answer
+        return csp
+    var_index = select_unassigned_variable(csp) #Find the next variable to be assigned
+    var = csp.vars[var_index]
+    for value in getDomain(csp,var): #Iterate on the domain
+        csp.vars[var_index].value = value #Change the assignment
+        if csp.consistent(): #If compelete then do recursive search
+            resault = recurseive_backtracing(csp)
+            if resault != False: #if answer is found then return the assignment
+                return resault
+        csp.vars[var_index].value = 0 #if the answer is not consistent or not found then remake the assignment
+    return False   
+
 if __name__ == "__main__":
-    domain = [1,2,3]
-    assignment = [  1,0,2,
-                    0,0,1,
-                    0,2,0]
-    size = 3
+    assignment = [  3,0,6,5,0,8,4,0,0,
+                    5,2,0,0,0,0,0,0,0,
+                    0,8,7,0,0,0,0,3,1,
+                    0,0,3,0,1,0,0,8,0,
+                    9,0,0,8,6,3,0,0,5,
+                    0,5,0,0,9,0,6,0,0,
+                    1,3,0,0,0,0,2,5,0,
+                    0,0,0,0,0,0,0,7,4,
+                    0,0,5,2,0,6,3,0,0]
+    size = 9
+    domain = [i for i in range(1,size+1)] 
     csp = CSP(domain,assignment,size)
-
-    print(csp.consistent())
-    print(csp.complete())
-
-    vars = csp.vars
-    for i in range(size*size):
-        dom = getDomain(csp,csp.vars[i])
-        var = csp.vars[i]
-        if var.value == 0:
-            print(dom,end=" ")
-        else:
-            print(var.value,end=" ")
-        if i%size == size-1:
-            print("")
-
-    print(select_unassigned_variable(csp)) 
-
+    answer = recurseive_backtracing(csp)
+    if answer == False:
+        print("No answer found!")
+    else:
+        for i in range(size*size):
+            print(answer.vars[i].value,end=" ")
+            if i%size == size-1:
+                print("")
 
 
 
